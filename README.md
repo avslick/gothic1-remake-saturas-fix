@@ -63,6 +63,17 @@ can reach Saturas. **Your original file is never modified** — the tool writes 
   "More info" → "Run anyway". The full source is included so you can build it
   yourself instead (see below).
 
+## Troubleshooting
+
+- **Nothing happens when you drag the save onto the `.exe`?**
+  Right-click the `.sav` file → **"Open with"** → `G1R-SaturasFix` — that works too.
+- **Still nothing?** Make sure you're **not** running the `.exe` as administrator.
+  Windows blocks drag-and-drop from a normal Explorer window into an elevated app.
+- **Terminal:** run it from a terminal with the save path as an argument:
+  ```
+  G1R-SaturasFix.exe "C:\Users\<you>\AppData\Local\G1R\Saved\SaveGames\G1R-013.sav"
+  ```
+
 ## Building from source
 
 The patcher is a single C++ file. Oodle decompression is handled by the
