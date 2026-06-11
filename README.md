@@ -32,9 +32,7 @@ can reach Saturas. **Your original file is never modified** — the tool writes 
 ## Requirements
 
 - **Windows**
-- **PC (Steam) version** of the game. Console saves are encrypted/signed and are
-  **not** supported.
-- Tested on game version: `<fill in, e.g. 1.000.004>`
+- **PC (Steam) version** of the game.
 
 ## Usage
 
