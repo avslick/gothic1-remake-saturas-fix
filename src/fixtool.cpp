@@ -61,7 +61,7 @@ static void pause_exit(int code){
 }
 static std::string read_line(){
   char buf[256];
-  if(!fgets(buf,sizeof buf,stdin)) return "";
+  if(!fgets(buf,sizeof buf,stdin)){ printf("\n(stdin closed — exiting without changes)\n"); exit(0); }
   std::string s(buf);
   while(!s.empty() && (s.back()=='\n'||s.back()=='\r'||s.back()==' ')) s.pop_back();
   return s;
