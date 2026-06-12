@@ -3,7 +3,7 @@
 > Fixes save-game bugs in **Gothic 1 Remake** (PC/Steam) — including the Chapter 3
 > softlock where the Water Mage guards turn hostile and you can't reach Saturas.
 
-**[⬇ Download the latest release](https://github.com/avslick/gothic1-remake-saturas-fix/releases/latest)**
+**[Download the latest release](https://github.com/avslick/gothic1-remake-saturas-fix/releases/latest)**
 
 | Tool | What it is |
 |---|---|
