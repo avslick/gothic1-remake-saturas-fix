@@ -1,15 +1,18 @@
-# Gothic 1 Remake — Saturas Guard Softlock Fix (Chapter 3)
+# Gothic 1 Remake — Save Fix Tool
 
-> Resets the `GuardPassageWaterMagesWarning_NC` flag in your save so the Water Mage
-> guards give you dialogue again instead of turning hostile — fixing the Chapter 3
-> softlock where you can't reach Saturas.
+> Fixes save-game bugs in **Gothic 1 Remake** (PC/Steam) — including the Chapter 3
+> softlock where the Water Mage guards turn hostile and you can't reach Saturas.
 
-<!-- Optional badges — fill in once the repo exists:
-![Platform](https://img.shields.io/badge/platform-Windows-blue)
-![License](https://img.shields.io/badge/license-GPLv3-green)
--->
+**[⬇ Download the latest release](https://github.com/avslick/gothic1-remake-saturas-fix/releases/latest)**
 
-## The bug
+| Tool | What it is |
+|---|---|
+| **G1R-FixTool-GUI.exe** | Windows app (English/Russian): pick your save, tick the fixes you want, click **Apply**. Backup and self-verification are automatic. |
+| **G1R-FixTool-Console.exe** | The same fixes in a console menu. |
+| **G1R-SaturasFix.exe** | The original one-purpose tool: drag & drop your `.sav` onto it, get a fixed copy. Unchanged since v1.0 — all old instructions still apply. |
+| **fixes.ini** | The list of fixes (ships next to the GUI/console exe). New fixes can be added here without recompiling. |
+
+## The Saturas bug (Chapter 3)
 
 In Chapter 3 the main quest sends you to meet **Saturas** in the New Camp. If you
 ever **walked up to the Water Mage guards earlier in the game** (e.g. in Chapter 1)
@@ -18,23 +21,26 @@ save. When you return during the quest, the dialogue that's supposed to let you 
 flickers for a split second and never fires — instead the guards **and** the Water
 Mages turn fully hostile, and the main story is softlocked.
 
-This is a known, widespread issue. The cause is that the guard-warning flag
-(`GuardPassageWaterMagesWarning_NC`) is left at `2`, which the game treats as
-"already warned / trespassing" and blocks the quest dialogue.
+The cause: the guard-warning flag (`GuardPassageWaterMagesWarning_NC`) is left at
+`2`, which the game treats as "already warned / trespassing" and blocks the quest
+dialogue. The fix resets it to `0` — the guards give you the normal "let me in"
+dialogue again.
 
-## What this tool does
+## Usage (GUI)
 
-It opens your save, finds `GuardPassageWaterMagesWarning_NC`, and resets it from
-`2` to `0`. After that the guards give you the normal "let me in" dialogue and you
-can reach Saturas. **Your original file is never modified** — the tool writes a new
-`*-fixed.sav` next to it.
+1. Close the game.
+2. Run **G1R-FixTool-GUI.exe** (keep `fixes.ini` next to it).
+3. Pick your save — the default folder is:
+   ```
+   C:\Users\<your name>\AppData\Local\G1R\Saved\SaveGames
+   ```
+4. Tick the fixes you want, click **Apply**. A backup of the original is created
+   automatically, and the result is re-parsed and verified before it's written.
+5. In Steam, temporarily **disable Steam Cloud** for the game
+   (Properties → General) so the cloud doesn't restore the old file.
+6. Launch the game and load the save.
 
-## Requirements
-
-- **Windows**
-- **PC (Steam) version** of the game.
-
-## Usage
+## Usage (classic drag & drop — G1R-SaturasFix.exe)
 
 1. Close the game.
 2. Open your save folder:
@@ -52,8 +58,8 @@ can reach Saturas. **Your original file is never modified** — the tool writes 
 
 ## Notes
 
-- The tool **verifies its own result**. If the save format is unexpected, it
-  refuses and changes nothing.
+- Both tools **verify their own result**. If the save format is unexpected, they
+  refuse and change nothing.
 - The fixed file is **slightly larger** than the original — that's expected. The
   payload is written back without Oodle re-compression; the game re-compresses
   everything on your next in-game save.
@@ -74,38 +80,91 @@ can reach Saturas. **Your original file is never modified** — the tool writes 
   G1R-SaturasFix.exe "C:\Users\<you>\AppData\Local\G1R\Saved\SaveGames\G1R-013.sav"
   ```
 
+## Linux (Steam Proton / Steam Deck)
+
+Your saves live inside the game's Proton prefix:
+
+```
+~/.local/share/Steam/steamapps/compatdata/1297900/pfx/drive_c/users/steamuser/AppData/Local/G1R/Saved/SaveGames/
+```
+
+You don't need to compile anything — Steam's own Wine (Proton) runs the exe:
+
+```bash
+cp G1R-002.sav G1R-002.sav.bak   # back up first
+WINEPREFIX="$HOME/.local/share/Steam/steamapps/compatdata/1297900/pfx" \
+  "$HOME/.local/share/Steam/steamapps/common/Proton - Experimental/files/bin/wine" \
+  /path/to/G1R-SaturasFix.exe \
+  "C:\users\steamuser\AppData\Local\G1R\Saved\SaveGames\G1R-002.sav"
+```
+
+Then rename `*-fixed.sav` back to the original name and disable Steam Cloud before
+launching, as above.
+
+- `Proton - Experimental` in the path depends on which Proton version the game
+  uses (check Properties → Compatibility); adjust the folder name under
+  `steamapps/common/` if you run a different one (e.g. a GE-Proton build).
+- Flatpak Steam: the base path is `~/.var/app/com.valvesoftware.Steam/.local/share/Steam/`.
+- Steam Deck: same steps, the prefix path is identical.
+
+## Adding new fixes
+
+Fixes are defined in `fixes.ini` — title/description (EN+RU), the save variable
+name and the value to set. The GUI and console pick them up on start, no
+recompilation needed:
+
+```ini
+[fix]
+title    = Menu title (Russian)
+title_en = Menu title (English)
+desc     = Description (Russian)
+desc_en  = Description (English)
+var      = SaveVariableName
+set      = 0
+```
+
+Found another save-flag bug? Open an issue with the variable name and the value
+that breaks it.
+
 ## Building from source
 
-The patcher is a single C++ file. Oodle decompression is handled by the
-open-source **[ooz](https://github.com/powzix/ooz)** project (a clean-room Oodle
-decoder), whose sources are included/vendored in this repo.
+**Visual Studio 2022:** open `G1R-FixTool.sln`, build Release | x64 — produces the
+GUI and console tools.
 
-**MSVC** (open a *Developer Command Prompt for VS*):
+**Linux → Windows cross-build (mingw-w64):** `./build-mingw.sh` builds all three
+exes into `dist/` (needs `g++-mingw-w64-x86-64`).
+
+**Just the classic drag & drop patcher** (single console exe):
+
+MSVC (open a *Developer Command Prompt for VS*):
 ```bat
-cl /O2 /EHsc /std:c++17 source-patcher.cpp ooz\*.cpp /Fe:G1R-SaturasFix.exe
+cl /O2 /EHsc /std:c++17 src\patcher.cpp src\kraken_lib.cpp src\bitknit.cpp src\lzna.cpp /Fe:G1R-SaturasFix.exe
 ```
 
-**MinGW-w64 / g++:**
+MinGW-w64 / g++:
 ```bash
-g++ -O2 -std=c++17 source-patcher.cpp ooz/*.cpp -o G1R-SaturasFix.exe
+g++ -O2 -std=c++17 -msse4.1 -fpermissive -w -static src/patcher.cpp src/kraken_lib.cpp src/bitknit.cpp src/lzna.cpp -o G1R-SaturasFix.exe
 ```
 
-> Adjust the `ooz\*.cpp` / `ooz/*.cpp` glob to match how the ooz sources are laid
-> out in your tree.
+CI: GitHub Actions builds everything on each push to `main`; pushing a `v*` tag
+publishes a GitHub Release with the binaries.
 
 ## How it works (technical)
 
 - Save files use a custom **`GSAV`** container; the gameplay payload inside is
-  **Oodle-compressed**, which is why the flag isn't visible in the raw bytes.
-- The tool decompresses the payload with **ooz**, locates the
-  `GuardPassageWaterMagesWarning_NC` property, and rewrites its value `2 → 0`.
-- It then writes the result as a new `.sav`. A length/format sanity check runs
-  before saving; on any mismatch it aborts without writing.
+  **Oodle-compressed**, which is why the flags aren't visible in the raw bytes.
+- The tool decompresses the payload with **ooz**, locates the target property
+  (e.g. `GuardPassageWaterMagesWarning_NC`), and rewrites its value (`2 → 0`).
+- It then rebuilds the container and writes the result. A length/format sanity
+  check (full re-parse of the rebuilt file) runs before saving; on any mismatch it
+  aborts without writing.
 
 ## Credits
 
-- Oodle decompression: the **ooz** project by Powzix (clean-room, open source).
-  Oodle itself is © RAD Game Tools / Epic Games; this repo does not include Oodle.
+- Oodle Kraken decompression: the **[ooz](https://github.com/powzix/ooz)** project
+  by Powzix (clean-room, open source). Oodle itself is © RAD Game Tools / Epic
+  Games; this repo does not include Oodle.
+- Save format reverse-engineered from real saves.
 
 ## Disclaimer
 
@@ -115,7 +174,7 @@ Single-player only. **Always back up your save first.** Use at your own risk.
 ## License
 
 This project is released under the **GNU General Public License v3.0** (see
-`LICENSE`). GPL is required because the tool compiles in the **ooz** Oodle
-decompressor, which is GPL-licensed — so the combined binary is a derivative work
-and must be distributed under the GPL, with full source available (it is, in this
-repo). Keep the ooz source files and their license headers intact.
+`LICENSE`). GPL is required because the tools compile in the **ooz** Oodle
+decompressor, which is GPL-licensed — so the combined binaries are derivative
+works and must be distributed under the GPL, with full source available (it is,
+in this repo). Keep the ooz source files and their license headers intact.

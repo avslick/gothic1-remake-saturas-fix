@@ -1,0 +1,17 @@
+# Build output
+dist/
+bin/
+obj/
+.vs/
+*.user
+
+# Web editor — kept local only, not part of the repo
+web/
+
+# Save files / backups — never commit user saves
+*.sav
+*.backup*
+
+# Claude
+.claude/
+CLAUDE.md
