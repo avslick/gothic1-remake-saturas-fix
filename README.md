@@ -159,26 +159,6 @@ publishes a GitHub Release with the binaries.
   check (full re-parse of the rebuilt file) runs before saving; on any mismatch it
   aborts without writing.
 
-## Code signing policy
-
-Free code signing on Windows provided by [SignPath.io](https://signpath.io),
-certificate by [SignPath Foundation](https://signpath.org).
-
-- Committers and reviewers: [avslick](https://github.com/avslick) (project maintainer)
-- Approvers: [avslick](https://github.com/avslick)
-
-Releases are built automatically by GitHub Actions from the public source in
-this repository and published on the [Releases](https://github.com/avslick/gothic1-remake-saturas-fix/releases)
-page.
-
-## Privacy policy
-
-This program will not transfer any information to other networked systems
-unless specifically requested by the user or the person installing or
-operating it. G1R Fix Tool works completely offline: it only reads and writes
-Gothic 1 Remake save files on the local machine and makes no network
-connections of any kind.
-
 ## Credits
 
 - Oodle Kraken decompression: the **[ooz](https://github.com/powzix/ooz)** project
